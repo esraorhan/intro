@@ -5,9 +5,24 @@ import ProductList from "./ProductList";
 import { Container, Row, Col } from "reactstrap";
 
 export default class App extends Component {
-  state = { currentCategory: "" };
+  state = { currentCategory: "", products: [] };
+  componentDidMount() {
+    this.getProudcts();
+  }
   changeCatgeory = (category) => {
     this.setState({ currentCategory: category.categoryName });
+   // console.log(category);
+    this.getProudcts(category.id);
+  };
+ 
+  getProudcts = (categoryId) => {
+    let url = "http://localhost:3000/products";
+    if (categoryId) {
+      url += "?categoryId=" + categoryId;
+    }
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => this.setState({ products: data }));
   };
 
   render() {
@@ -29,7 +44,11 @@ export default class App extends Component {
               />
             </Col>
             <Col xs="9">
-              <ProductList info={prouductInfo} />
+              <ProductList
+                products={this.state.products}
+                currentCategory={this.state.currentCategory}
+                info={prouductInfo}
+              />
             </Col>
           </Row>
         </Container>
